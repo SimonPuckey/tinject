@@ -13,6 +13,5 @@ const fworks = {
 };
 
 const fwork = process.argv[2];
-console.log(fwork);
 exports.module = fworks[fwork] || "invalid testing framework";
 

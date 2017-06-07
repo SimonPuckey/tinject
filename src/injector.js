@@ -13,8 +13,10 @@ module.exports = {
         };
 
         const requireOverride = function () {
+            // console.log('hi');
+            // console.log('args1: ', arguments[0])
             //count++;
-            // console.log(`request ${count} is ${arguments[0]}`);//debugging
+            //console.log(`request ${count} is ${arguments[0]}`);//debugging
             //TODO: use param destruct & arrow function rather than func with arg obj and bound this? Need 'this' below tho
             const moduleRequest = arguments[0];
 
@@ -22,7 +24,12 @@ module.exports = {
             //TODO: ERROR - cache key looked up (substr mod name) is different to key cached (full path)??
             //TODO:need to substring and get last token when checking for a mock - write as separate function so created once in memory
             //const reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.'));//first request for mock exp = undefined
-            const reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.')) || moduleRequest; //check for .js sans path also? use regexp to speed up?
+            try{
+                const reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.')) || moduleRequest; //check for .js sans path also? use regexp to speed up?
+            }catch(e){
+
+            }
+
             //look in cache for module and gets from 2nd arg if cannot find. override cache? see ^
             //const givenModule = requireCache[reqModule] || (arguments[1] instanceof Object ? arguments[1] : undefined);//so 1st request will always use arg
             const givenModule = arguments[1] instanceof Object ? arguments[1] : requireCache[reqModule];
