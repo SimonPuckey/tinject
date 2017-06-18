@@ -24,11 +24,14 @@ module.exports = {
             //TODO: ERROR - cache key looked up (substr mod name) is different to key cached (full path)??
             //TODO:need to substring and get last token when checking for a mock - write as separate function so created once in memory
             //const reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.'));//first request for mock exp = undefined
+            let reqModule;
             try{
-                const reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.')) || moduleRequest; //check for .js sans path also? use regexp to speed up?
+                reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.')) || moduleRequest; //check for .js sans path also? use regexp to speed up?
             }catch(e){
-
+                //cant remember why try/catch? need to properly throw if necessary...
             }
+
+            console.log('DEBUG',reqModule);
 
             //look in cache for module and gets from 2nd arg if cannot find. override cache? see ^
             //const givenModule = requireCache[reqModule] || (arguments[1] instanceof Object ? arguments[1] : undefined);//so 1st request will always use arg
