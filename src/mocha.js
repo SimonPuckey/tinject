@@ -21,7 +21,7 @@ fs.readdirSync(testDir).filter(function(file){
     );
 });
 
-global.mockRequire = injector.init();
+global.mockRequire = injector.overrideRequire();
 global.phantom = {
         exit:() => {}
 };
