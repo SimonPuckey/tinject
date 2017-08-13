@@ -1,4 +1,5 @@
 //index.js should route  to various testing frameworks - but just use mocha for now
+const getConfigModule = require('./injector-config').getConfigModule;
 
 var Mocha = require('mocha'),
     fs = require('fs'),
@@ -21,7 +22,11 @@ fs.readdirSync(testDir).filter(function(file){
     );
 });
 
-global.mockRequire = injector.overrideRequire();
+//pass in config so can stub from test
+//global.mockRequire = injector.overrideRequire(config);
+//TODO: even better pass in getConfig func
+global.mockRequire = injector.overrideRequire(getConfigModule);
+//global.mockRequire = injector.overrideRequire();
 global.phantom = {
         exit:() => {}
 };

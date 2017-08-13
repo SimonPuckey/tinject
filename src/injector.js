@@ -1,4 +1,4 @@
-const config = require('./injector-config');
+let getConfigModule;
 
 console.log('Mocha test runner initialised with Tinject...');
 const Module = require('module');
@@ -7,9 +7,6 @@ const originalRequire = Module.prototype.require;
 const requireCache = {};
 //let count =0;//debugging
 
-const getConfigModule = function (moduleRequest) {
-    return (config[moduleRequest] instanceof Function) ? config[moduleRequest].call(this) : config[moduleRequest];
-};
 const requireOverride = function () {
     // console.log('hi');
     // console.log('args1: ', arguments[0])
@@ -18,7 +15,7 @@ const requireOverride = function () {
     //TODO: use param destruct & arrow function rather than func with arg obj and bound this? Need 'this' below tho
     const moduleRequest = arguments[0];
 
-    //TODO: write as series of rules that fall thru - chain of responsibility kinda...
+    //TODO: write as series of rules that fall thru
     //TODO: ERROR - cache key looked up (substr mod name) is different to key cached (full path)??
     //TODO:need to substring and get last token when checking for a mock - write as separate function so created once in memory
     //const reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.'));//first request for mock exp = undefined
@@ -36,8 +33,9 @@ const requireOverride = function () {
 };
 
 module.exports = {
-    overrideRequire: () => {
+    overrideRequire: (getModuleConfig) => {
+        getConfigModule = getModuleConfig;
         Module.prototype.require = requireOverride;
         return requireOverride;
     }
-}
+};
