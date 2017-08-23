@@ -2,9 +2,11 @@ let getConfigModule;
 
 console.log('Mocha test runner initialised with Tinject...');
 const Module = require('module');
-const originalRequire = Module.prototype.require;
-
-const requireCache = {};
+//this should be const but changed to let so can rewire :-(
+let originalRequire = Module.prototype.require;
+//this should be const but changed to let so can rewire :-(
+//Pass cache in as dependency and stub
+let requireCache = {};
 //let count =0;//debugging
 
 const requireOverride = function () {
@@ -14,7 +16,6 @@ const requireOverride = function () {
     //console.log(`request ${count} is ${arguments[0]}`);//debugging
     //TODO: use param destruct & arrow function rather than func with arg obj and bound this? Need 'this' below tho
     const moduleRequest = arguments[0];
-
     //TODO: write as series of rules that fall thru
     //TODO: ERROR - cache key looked up (substr mod name) is different to key cached (full path)??
     //TODO:need to substring and get last token when checking for a mock - write as separate function so created once in memory
@@ -22,13 +23,17 @@ const requireOverride = function () {
     const reqModule = moduleRequest.substring(moduleRequest.lastIndexOf('/')+1, moduleRequest.lastIndexOf('.')) || moduleRequest; //check for .js sans path also? use regexp to speed up?
     //look in cache for module and gets from 2nd arg if cannot find. override cache? see ^
     //const givenModule = requireCache[reqModule] || (arguments[1] instanceof Object ? arguments[1] : undefined);//so 1st request will always use arg
-    const givenModule = arguments[1] instanceof Object ? arguments[1] : requireCache[reqModule];
+    console.log(requireCache[reqModule]);
+    console.log(arguments[1]);
+    const givenModule = arguments[1] instanceof Object && !Array.isArray(arguments[1]) ? arguments[1] : requireCache[reqModule];
+    console.log(givenModule);
     const mockModule = givenModule || getConfigModule.call(this,moduleRequest); // config local to project first process.cwd()
     // console.log('before caching - modReq', moduleRequest);
     // console.log('before caching - reqMod', reqModule);
     //requireCache[moduleRequest] = mockModule;//cache/re-cache module//TODO: check if kv same before overwriting?
+    //if(moduleRequest === 'BROKEN_TEST_REQUEST') console.log(reqModule,requireCache[0]);
     requireCache[reqModule] = mockModule;
-    // console.log('after caching...',requireCache[moduleRequest]);
+    //console.log('after caching...',requireCache[moduleRequest]);
     return mockModule || originalRequire.apply(this, arguments);
 };
 
