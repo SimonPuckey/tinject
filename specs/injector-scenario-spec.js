@@ -44,16 +44,13 @@ describe('require', () => {
                 });
             });
             describe('matching a config entry', () => {
-                //need to stub config to return match
-                let configSpy;
+                let restoreConfig;
                 beforeEach(() => {
-                    configSpy = expect.spyOn(injectorConfig, "getConfigModule");
-                    configSpy.andReturn(FAKE_MODULE);
-                    //overwrite require with version called with spy...
-                    require = injector.overrideRequire(injectorConfig.getConfigModule);//get clean mock require with spy as arg
+                    restoreConfig = injector.__set__("getConfigModule", () => FAKE_MODULE);
+                    require = injector.overrideRequire();
                 });
                 afterEach(()=>{
-                   configSpy.restore();
+                    restoreConfig();
                 });
                 it('should return config entry',() => {
                     const result = require(FAKE_MODULE_REQUEST);
@@ -143,20 +140,23 @@ describe('require', () => {
         });
 
         describe('and no cache entry matching module request',()=>{
-            //TODO: rewire
             let configSpy;
-            let rewiredRequire;
+            let restoreConfig;
             let requireSpy;
+            let restoreRequire;
             beforeEach(() => {
-                configSpy = expect.spyOn(injectorConfig, "getConfigModule");
-                require = injector.overrideRequire(injectorConfig.getConfigModule);
+                configSpy = expect.createSpy();
+                restoreConfig = injector.__set__('getConfigModule', configSpy);
+                require = injector.overrideRequire();
                 requireSpy = expect.createSpy();
                 requireSpy.andReturn(FAKE_MODULE);
-                rewiredRequire = injector.__set__("originalRequire", requireSpy);
+                restoreRequire = injector.__set__("originalRequire", requireSpy);
             });
             afterEach(()=> {
                 configSpy.restore();
-                rewiredRequire();
+                restoreConfig();
+                requireSpy.restore();
+                restoreRequire();
             });
             describe('and config entry matching module request', () => {
                 it('should attempt to get module from config', () => {
