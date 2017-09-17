@@ -4,7 +4,7 @@
   "description": "Shim for commonjs require when running tests on node",
   "main": "dist/index.js",
   "scripts": {
-    "transpile": "babel -d dist/ src/",
+    "babel": "babel -d dist/ src/",
     "babel-watch": "babel -w src/ -d dist/",
     "test": "./node_modules/.bin/mocha --reporter spec specs",
     "test-watch": "./node_modules/.bin/mocha --reporter spec specs --watch"

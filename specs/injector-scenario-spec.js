@@ -7,7 +7,7 @@ describe('require', () => {
     let require;
     //Get a clean function for each test
     beforeEach(()=>{
-        require = injector.overrideRequire(injectorConfig.getConfigModule);
+        require = injector.overrideRequire();
     });
 
     describe('given no arguments', () => {
@@ -79,14 +79,14 @@ describe('require', () => {
         const FAKE_MODULE_OVERRIDE = { testKey: "test value" };
         describe('and cache entry matching module request', () => {
             let configSpy;
+            let restoreConfig;
             beforeEach(() => {
-                configSpy = expect.spyOn(injectorConfig, "getConfigModule");
-                //configSpy.andReturn(FAKE_MODULE);
-                //overwrite require with version called with spy...
-                require = injector.overrideRequire(injectorConfig.getConfigModule);
+                configSpy = expect.createSpy();
+                restoreConfig = injector.__set__('getConfigModule', configSpy);
+                require = injector.overrideRequire();
             });
             afterEach(()=>{
-                configSpy.restore();
+                restoreConfig();
             });
             after(()=>{
                 //reset requireCache after caching override
@@ -114,16 +114,18 @@ describe('require', () => {
         const FAKE_MODULE_OVERRIDE_ARRAY = [{ testKey: "test value of object in array" }];//we supply an array. bad.
         describe('and cache entry matching module request',()=> {
             let restoreCache;
+            let restoreConfig;
             beforeEach(()=>{
                 restoreCache = injector.__set__("requireCache", {FAKE_MODULE_REQUEST : FAKE_MODULE});
             });
             afterEach(()=>{
                 restoreCache();
+                restoreConfig();
             });
             it('should not attempt to get module from config', () => {
-                //set up spy local to test where required
-                configSpy = expect.spyOn(injectorConfig, "getConfigModule");
-                require = injector.overrideRequire(injectorConfig.getConfigModule);
+                const configSpy = expect.createSpy();
+                restoreConfig = injector.__set__('getConfigModule', configSpy);
+                require = injector.overrideRequire();
                 require(FAKE_MODULE_REQUEST, FAKE_MODULE_OVERRIDE_ARRAY);
                 expect(configSpy.calls.length).toEqual(0);
             });
