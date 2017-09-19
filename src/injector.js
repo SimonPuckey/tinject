@@ -14,11 +14,7 @@ const getSuppliedModule = (moduleName,moduleOverride, moduleCache) =>
         moduleOverride :
         moduleCache[moduleName];
 
-// const requireOverride = function() {
-let count =0;
-const requireOverride = (...args) => {
-    count++;
-    console.log('COUNT CALLED', count);
+const requireOverride = function (...args) {
     let [moduleName, mockModule] = args;
     //TODO: write as series of rules that fall thru
     //TODO: ERROR - cache key looked up (substr mod name) is different to key cached (full path)??
@@ -27,8 +23,6 @@ const requireOverride = (...args) => {
     mockModule = givenModule || getConfigModule.call(this,moduleName); // config local to project first process.cwd()
     //NOTE: if we supply a module override arg then it will overwrite cache
     requireCache[moduleName] = mockModule;
-    console.log('TINJECT SAYS HI!');
-    console.log('this is:', this, 'and args are: ', args);
     return mockModule || originalRequire.apply(this, args);
 };
 

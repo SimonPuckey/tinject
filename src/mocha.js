@@ -23,9 +23,7 @@ global.phantom = {
         exit:() => {}
 };
 
-// Run the tests.
 mocha.run(function(failures){
-    console.log('in mocha run');
     process.on('exit', function () {
         process.exit(failures);  // exit with non-zero status if there were failures
     });
