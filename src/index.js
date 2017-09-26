@@ -6,7 +6,7 @@
 //
 // shell.exec("echo shell.exec works");
 
-const mochaRun = require('./mocha');
+const mochaRun = require('./mocha-run');
 
 const fworks = {
     mocha: mochaRun
