@@ -1,12 +1,12 @@
-var Mocha = require('mocha'),
+const Mocha = require('mocha'),
     fs = require('fs'),
     path = require('path'),
     injector = require('./injector');
 
 // Instantiate a Mocha instance.
-var mocha = new Mocha({reporter:'spec'});
+const mocha = new Mocha({reporter: 'spec'});
 
-var testDir = './specs';
+const testDir = './specs';
 
 // Add each .js file to the mocha instance
 fs.readdirSync(testDir).filter(function(file){
